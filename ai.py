@@ -105,7 +105,7 @@ def search_next(me, target,m,dx,dy):
         #print(tile.__dict__)
         content = tile.Content
         point = Point(n[1][0],n[1][1])
-        if content==0 or content==2 or content==5:
+        if content==0 or content==2 or content==5:gi
             return create_move_action(point)
         elif content==1 or content == 6:
             #print('attack',point)
