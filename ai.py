@@ -63,7 +63,7 @@ def visual(lines,x,y):
         print(line)
 
 def distance(p1, p2):
-    return math.ceil(math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2))
+    return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
 
 '''
 def searchg(x,y,grid,target, at):
@@ -97,6 +97,7 @@ def search_next(me, target,m,dx,dy):
     for neighbor in neighbors:
         tNeighbors.append([distance(neighbor,[target.X, target.Y]),neighbor])
     sortedNeighbors=sorted(tNeighbors, key=lambda x:x[0])
+    print(sortedNeighbors)
     for n in sortedNeighbors:
         #print(target.__dict__)
         #print(x,y)
@@ -108,14 +109,15 @@ def search_next(me, target,m,dx,dy):
         content = tile.Content
         point = Point(n[1][0],n[1][1])
         if content==0 or content==2:
+            print('----move----',point)
             return create_move_action(point)
         elif content==1 or content == 6:
-            #print('attack',point)
+            print('attack',point)
             return create_attack_action(point)
         elif content==4:
             return create_collect_action(point)
         else:# content==3:
-            #print('skip')
+            print('skip')
             continue
         
 def route(start, end, at, best=[]):
@@ -266,4 +268,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=3000)
