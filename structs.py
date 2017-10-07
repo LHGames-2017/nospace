@@ -1,8 +1,42 @@
 import math
+#           lvl,value, cost
+HEALTHLVL = {0:[5,0],
+             1:[8,10000],
+             2:[10,20000],
+             3:[15,30000],
+             4:[20,50000],
+             5:[30,100000]}
+
+ATTACKLVL = {0:[1,0],
+             1:[3,15000],
+             2:[5,50000],
+             3:[7,100000],
+             4:[9,250000],
+             5:[11,500000]}
+
+DEFENSELVL = {0:[1,0],
+             1:[3,15000],
+             2:[5,50000],
+             3:[7,100000],
+             4:[9,250000],
+             5:[11,500000]}
+
+COLSPEEDLVL = {0:[1.0,0],
+             1:[1.25,15000],
+             2:[1.5,50000],
+             3:[2,100000],
+             4:[2.5,250000],
+             5:[3.5,500000]}
+
+CAPACITYLVL = {0:[1000,0],
+             1:[1500,15000],
+             2:[2500,50000],
+             3:[5000,100000],
+             4:[10000,250000],
+             5:[25000,500000]}
 
 class ActionTypes():
     DefaultAction, MoveAction, AttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction = range(7)
-
 
 class UpgradeType():
     CarryingCapacity, AttackPower, Defence, MaximumHealth, CollectingSpeed = range(5)
@@ -13,7 +47,28 @@ class TileType():
 
 
 class TileContent():
-    Empty, Resource, House, Player, Wall, Lava, Shop = range(7)
+    Empty, Wall, House, Lava, Resource, Shop, Player = range(7)
+
+class Upgrades(object):
+    levels = {}
+    def __init__(self, lvl=0):
+        self.Lvl=0
+    
+    def upgrade():
+        self.Lvl = self.Lvl + 1
+    
+    def nextLvl(currentLvl):
+        if currentLvl+1<5:
+            return currentLvl+1
+        else:
+            return -1
+    def nextLvlprice(currentLvl):
+        nxtlvl = nextLvl(currentLvl)
+        if nxtlvl!=-1:
+            return levels[nxtlvl][1]
+        return -1
+    def setLvls(levelDict):
+        self.levels=levelDict
 
 
 class Point(object):
@@ -69,6 +124,7 @@ class Player(object):
         self.CarriedRessources = carriedRessources
         self.CarryingCapacity = carryingCapacity
 
+        
 
 class PlayerInfo(object):
 
@@ -81,4 +137,4 @@ class ActionContent(object):
 
     def __init__(self, action_name, content):
         self.ActionName = action_name
-        self.Content = {}
+        self.Content = str(content)
