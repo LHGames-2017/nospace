@@ -56,7 +56,7 @@ def visual(lines,x,y):
     
     for i in lines:
         line = ''
-        for j in i:
+        for j in i[:20]:
             #Empty, Wall, House, Lava, Resource, Shop, Player
             #0      1     2      3     4         5     6
             line+=str(j.Content).replace('None','N').replace('0', ' ').replace('1','#').replace('2','^').replace('3','L').replace('4','$').replace('5','S').replace('6','o')
@@ -88,12 +88,14 @@ def searchg(x,y,grid,target, at):
 def search_next(me, target,m,dx,dy):
     x=me.Position.X
     y=me.Position.Y
-    if m[x-dx][y-dy].Content==4:
-        return create_move_action(Point(x+dx,y+dy))
+    if me.CarriedRessources==me.CarryingCapacity:
+        target=me.HouseLocation
+    #if distance([target.X,target.Y],[x,y])==0:
+    #    return create_collect_action(Point(x+dx, x+dy))
     neighbors = [[x+1,y],[x-1,y],[x,y+1],[x,y]]
     tNeighbors = []
     for neighbor in neighbors:
-        tNeighbors.append([distance([x,y],[target.X, target.Y]),neighbor])
+        tNeighbors.append([distance(neighbor,[target.X, target.Y]),neighbor])
     sortedNeighbors=sorted(tNeighbors, key=lambda x:x[0])
     for n in sortedNeighbors:
         #print(target.__dict__)
@@ -105,11 +107,13 @@ def search_next(me, target,m,dx,dy):
         #print(tile.__dict__)
         content = tile.Content
         point = Point(n[1][0],n[1][1])
-        if content==0 or content==2 or content==5:
+        if content==0 or content==2:
             return create_move_action(point)
         elif content==1 or content == 6:
             #print('attack',point)
             return create_attack_action(point)
+        elif content==4:
+            return create_collect_action(point)
         else:# content==3:
             #print('skip')
             continue
@@ -211,7 +215,7 @@ def bot():
     
     
     targets = findTargets(deserialized_map, player)
-    #visual(transposed[::-1],x,y)
+    visual(transposed[:20][::-1],x,y)
     otherPlayers = []
     '''
     #print(map_json)
@@ -248,7 +252,7 @@ def bot():
                 dx = x-i
                 dy = y-j
     #return decide(player, sortedEnemies, sortedTargets, deserialized_map)
-    
+    print(player.__dict__,player.Position.__dict__)
     return search_next(player, sortedTargets[0][1], deserialized_map,dx,dy)
     
     
