@@ -86,7 +86,7 @@ def searchg(x,y,grid,target, at):
 def search_next(me, target,m):
     x=me.Position.X
     y=me.Position.Y
-    neighbors = [[x+1-24,y-22],[x-1-24,y-22],[x-24,y+1-22],[x-24,y-22]]
+    neighbors = [[x+1,y],[x-1,y],[x,y+1],[x,y]]
     tNeighbors = []
     for neighbor in neighbors:
         tNeighbors.append([distance([x,y],[target.X, target.Y]),neighbor])
