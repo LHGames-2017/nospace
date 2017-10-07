@@ -88,6 +88,8 @@ def searchg(x,y,grid,target, at):
 def search_next(me, target,m,dx,dy):
     x=me.Position.X
     y=me.Position.Y
+    if m[x-dx][y-dy].Content==4:
+        return create_move_action(Point(x+dx,y+dy))
     neighbors = [[x+1,y],[x-1,y],[x,y+1],[x,y]]
     tNeighbors = []
     for neighbor in neighbors:
@@ -97,12 +99,13 @@ def search_next(me, target,m,dx,dy):
         #print(target.__dict__)
         #print(x,y)
         #print('----------',n,'--------')
+            #Empty, Wall, House, Lava, Resource, Shop, Player
+            #0      1     2      3     4         5     6
         tile = m[n[1][0]-dx][n[1][1]-dy]
         #print(tile.__dict__)
         content = tile.Content
         point = Point(n[1][0],n[1][1])
-        if content==0 or content==2 or content==5 or content==4:
-            #print('move',point)
+        if content==0 or content==2 or content==5:
             return create_move_action(point)
         elif content==1 or content == 6:
             #print('attack',point)
