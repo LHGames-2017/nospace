@@ -211,7 +211,7 @@ def bot():
     
     
     targets = findTargets(deserialized_map, player)
-    visual(transposed[::-1],x,y)
+    #visual(transposed[::-1],x,y)
     otherPlayers = []
     '''
     #print(map_json)
