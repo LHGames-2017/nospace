@@ -5,23 +5,25 @@ import numpy as np
 import sys
 import random, time
 app = Flask(__name__)
+dx=0
+dy=0
 
 def create_action(action_type, target):
     actionContent = ActionContent(action_type, target.__dict__)
-    print(actionContent)
+    #print(actionContent)
     return json.dumps(actionContent.__dict__)
 
 def create_move_action(target):
-    return create_action("MoveAction", target)
+    return create_action("MoveAction", Point(target.X-dx,target.Y-dy))
 
 def create_attack_action(target):
-    return create_action("AttackAction", target)
+    return create_action("AttackAction", Point(target.X-dx,target.Y-dy))
 
 def create_collect_action(target):
-    return create_action("CollectAction", target)
+    return create_action("CollectAction", Point(target.X-dx,target.Y-dy))
 
 def create_steal_action(target):
-    return create_action("StealAction", target)
+    return create_action("StealAction", Point(target.X-dx,target.Y-dy))
 
 def create_heal_action():
     return create_action("HealAction", "")
@@ -83,7 +85,7 @@ def searchg(x,y,grid,target, at):
         return True
     return False
 '''
-def search_next(me, target,m):
+def search_next(me, target,m,dx,dy):
     x=me.Position.X
     y=me.Position.Y
     neighbors = [[x+1,y],[x-1,y],[x,y+1],[x,y]]
@@ -92,21 +94,21 @@ def search_next(me, target,m):
         tNeighbors.append([distance([x,y],[target.X, target.Y]),neighbor])
     sortedNeighbors=sorted(tNeighbors, key=lambda x:x[0])
     for n in sortedNeighbors:
-        print(target.__dict__)
-        print(x,y)
-        print('----------',n,'--------')
-        tile = m[n[1][0]][n[1][1]]
-        print(tile.__dict__)
+        #print(target.__dict__)
+        #print(x,y)
+        #print('----------',n,'--------')
+        tile = m[n[1][0]-dx][n[1][1]-dy]
+        #print(tile.__dict__)
         content = tile.Content
-        point = Point(n[1][0]+24,n[1][1]+22)
+        point = Point(n[1][0],n[1][1])
         if content==0 or content==2 or content==5 or content==4:
-            print('move',point)
+            #print('move',point)
             return create_move_action(point)
         elif content==1 or content == 6:
-            print('attack',point)
+            #print('attack',point)
             return create_attack_action(point)
         else:# content==3:
-            print('skip')
+            #print('skip')
             continue
         
 def route(start, end, at, best=[]):
@@ -165,20 +167,20 @@ def decide(me, closestEnemies, targets, grid):
     at=[]
     
     if distEn==1:
-        print('------1-------')
+        #print('------1-------')
         return create_attack_action(Point(enemy.X,enemy.Y))
     elif distTarget==1 and target.Content==2:
-        print('------2-------')
+        #print('------2-------')
         return create_collect_action(Point(target.X,target.Y))
     elif distTarget==0 and target.Content==4:
-        print('------3-------')
+        #print('------3-------')
         return create_collect_action(Point(target.X,target.Y))
     else:
-        print('------4-------')
+        #print('------4-------')
         #t = random.choice([1,0])
         #u = (t+1)%2
         #return create_move_action(Point(me.Position.X+t,me.Position.Y+u))
-        search_next(me, target, grid)
+        return search_next(me, target, grid)
 def bot():
     """
     Main de votre bot.
@@ -209,14 +211,14 @@ def bot():
     visual(transposed[::-1],x,y)
     otherPlayers = []
     '''
-    print(map_json)
+    #print(map_json)
     for player_dict in map_json["OtherPlayers"]:
-        print(player_dict)
+        #print(player_dict)
         for player_name in player_dict.keys():
             player_info = player_dict[player_name]
-            print('---------')
-            print(player_info)
-            print('---------')
+            #print('---------')
+            #print(player_info)
+            #print('---------')
             p_pos = player_info["Position"]
             player_info = PlayerInfo(player_info["Health"],
                                      player_info["MaxHealth"],
@@ -227,7 +229,7 @@ def bot():
     # return decision
     #targets = 
     tTargets = []
-    for target in targets[0]+targets[1]:
+    for target in targets[0]:#+targets[1]:
         tTargets.append([distance([x,y],[target.X,target.Y]),target])
     sortedTargets = sorted(tTargets, key=lambda x:x[0])
     
@@ -236,16 +238,18 @@ def bot():
     for enemy in otherPlayers:
         tEnemies.append([distance([x,y],[enemy.X,enemy.Y]),enemy])
     sortedEnemies = sorted(tEnemies, key=lambda x:x[0])
-    #temporary
-    #print(deserialized_map[0][0])
-    print('self',x,y,deserialized_map[y-24][x-22].__dict__)
-    print('N1:',deserialized_map[x+1-24][y-22].__dict__)
-    print('N2:',deserialized_map[x-1-24][y-22].__dict__)
-    print('N3:',deserialized_map[x-24][y+1-22].__dict__)
-    print('N4:',deserialized_map[x-24][y-1-22].__dict__)
+    dx,dy=0,0
+    for i,line in enumerate(deserialized_map):
+        for j,tile in enumerate(line):
+            if tile.X==x and tile.Y==y:
+                dx = x-i
+                dy = y-j
+    #return decide(player, sortedEnemies, sortedTargets, deserialized_map)
     
-    return decide(player, sortedEnemies, sortedTargets, deserialized_map)
-
+    return search_next(player, sortedTargets[0][1], deserialized_map,dx,dy)
+    
+    
+    
 @app.route("/", methods=["POST"])
 def reponse():
     """
