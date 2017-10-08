@@ -89,10 +89,11 @@ def search_next(me, target,m,dx,dy):
     x=me.Position.X
     y=me.Position.Y
     if me.CarriedRessources==me.CarryingCapacity:
+        print('resource')
         target=me.HouseLocation
     #if distance([target.X,target.Y],[x,y])==0:
     #    return create_collect_action(Point(x+dx, x+dy))
-    neighbors = [[x+1,y],[x-1,y],[x,y+1],[x,y]]
+    neighbors = [[x+1,y],[x-1,y],[x,y+1],[x,y-1]]
     tNeighbors = []
     for neighbor in neighbors:
         tNeighbors.append([distance(neighbor,[target.X, target.Y]),neighbor])
@@ -207,7 +208,7 @@ def bot():
     
     house = p["HouseLocation"]
     player = Player(p["Health"], p["MaxHealth"], Point(x,y),
-                    Point(house["X"], house["Y"]),
+                    Point(house["X"], house["Y"]), p["Score"],
                     p["CarriedResources"], p["CarryingCapacity"])
 
     # Map
